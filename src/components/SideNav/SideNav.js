@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { Button } from "@mui/material";
 import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -8,6 +8,7 @@ import { logoutWithGoogle } from "../../redux-store/slice/login-slice";
 import Avatar from "@mui/material/Avatar";
 import { Tooltip } from "react-tooltip";
 import { useNavigate } from "react-router-dom";
+import SideNavMenu from "../Side-Nav-Menu/SideNavMenu";
 
 import "./styles.scss";
 
@@ -23,13 +24,12 @@ function SideNav({ signInText }) {
   };
 
   useEffect(() => {
-    if(!isLoggedIn) {
+    if (!isLoggedIn) {
       navigate("/login");
-
     }
-  }, [isLoggedIn])
+  }, [isLoggedIn]);
   return (
-    <div className="side-nav-bar w-25 h-100 row col-2 p-0 m-auto d-flex align-items-center">
+    <div className="side-nav-bar w-25 h-100 row col-2 p-0 m-auto d-flex align-items-center flex-wrap">
       {isLoggedIn && (
         <div className="d-flex flex-row flex-wrap justify-content-center align-items-center side-nav-bar__user-name">
           <Avatar
@@ -40,6 +40,11 @@ function SideNav({ signInText }) {
           />
           <div>{user?.displayName}</div>
           <Tooltip anchorSelect="#user-name">{user?.displayName}</Tooltip>
+        </div>
+      )}
+      {isLoggedIn && (
+        <div className="side-nav-bar__menu">
+          <SideNavMenu />
         </div>
       )}
       <div className="side-nav-bar__sign-in">
@@ -67,10 +72,6 @@ function SideNav({ signInText }) {
           </Button>
         )}
       </div>
-      <div className="side-nav-bar__logo"></div>
-      <div className="side-nav-bar__menu"></div>
-      <div className="side-nav-bar__profile"></div>
-      <div className="side-nav-bar__settings"></div>
     </div>
   );
 }

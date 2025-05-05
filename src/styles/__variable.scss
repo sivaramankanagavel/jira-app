@@ -18,6 +18,7 @@ $main-container-bg: $main-panel-bg;
 
 // text colors:
 $user-name-color: #fff;
+$side-nav-menu-color: #fff;
 
 // Mixin for re-usable flex styles:
 @mixin flex-center($display: flex, $direction: row, $justify: center, $align: center) {

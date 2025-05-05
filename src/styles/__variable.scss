@@ -1,0 +1,28 @@
+// bootstrap package import
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+// different heights:
+.h-10 {
+    height: 10%;
+}
+
+.h-90 {
+    height: 90%;
+}
+
+// Background Colors:
+$side-nav-bg: #2C3E50;
+$main-panel-bg: #ECF0F1;
+$breadcrumbs-bg: #3498DB;
+$main-container-bg: $main-panel-bg;
+
+// text colors:
+$user-name-color: #fff;
+
+// Mixin for re-usable flex styles:
+@mixin flex-center($display: flex, $direction: row, $justify: center, $align: center) {
+    display: $display;
+    flex-direction: $direction;
+    justify-content: $justify;
+    align-items: $align;
+}

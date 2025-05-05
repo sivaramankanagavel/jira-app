@@ -1,0 +1,27 @@
+@import "../../styles/_variable.scss";
+
+.main-panel {
+    // width: 75%;
+    // height: 100%;
+    // @include flex-center(block, column, center, center);
+    background-color: $main-panel-bg;
+    opacity: 1;
+
+    &__breadcrumbs {
+        // width: 100%;
+        // height: 20%;
+        // display: flex;
+        // justify-content: space-between;
+        // align-items: center;
+        background-color: $breadcrumbs-bg;
+        opacity: 1;
+    }
+
+    &__container {
+        // width: 100%;
+        // height: 80%;
+        // @include flex-center(flex, column, center, center);
+        background-color: $main-container-bg;
+        opacity: 1;
+    }
+}

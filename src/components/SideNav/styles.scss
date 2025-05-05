@@ -1,0 +1,16 @@
+@import '../../styles/_variable.scss';
+
+.side-nav-bar {
+    background-color: $side-nav-bg;
+    opacity: 1;
+
+    &__sign-in{
+        @include flex-center(flex, row, center, center);
+    }
+
+    &__user-name{
+        @include flex-center(flex, row, center, center);
+        gap: 10px;
+        color: $user-name-color;
+    }
+}

@@ -53,7 +53,6 @@ export const loginWithGoogle = createAsyncThunk(
     async (dispatch) => {
         try {
             const result = await signInWithPopup(auth, provider);
-            console.log(result);
             const user = result.user;
             return {
                 uid: user?.uid,

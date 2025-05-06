@@ -10,6 +10,8 @@ import {
   IconButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { useDispatch, useSelector } from "react-redux";
+import { addProject, resetProjectData } from "../../redux-store/slice/add-project-slice";
 
 import "./styles.scss";
 
@@ -23,6 +25,9 @@ function Projects() {
     endDate: "",
     createdAt: "",
   });
+  const dispatch = useDispatch();
+  const projectDataFromStore = useSelector((state) => state?.addProject);
+  const { projectName, projectDescription, ownerId, startDate, endDate, createdAt } = projectDataFromStore;
 
   const handleProjectAdd = () => {
     setShowProjectModel(true);
@@ -38,6 +43,7 @@ function Projects() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    dispatch(addProject(projectData));
     setShowProjectModel(false);
   }
 

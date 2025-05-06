@@ -5,10 +5,10 @@ import {
   Button,
   FormControl,
   FormLabel,
-  InputLabel,
   NativeSelect,
   TextField,
 } from "@mui/material";
+import { useDispatch } from "react-redux";
 
 function Admin() {
   const [adminData, setAdminData] = useState({
@@ -16,6 +16,7 @@ function Admin() {
     userType: "",
     project: "",
   });
+  const dispatch = useDispatch();
 
   const handleCancel = () => {
     setAdminData({
@@ -27,7 +28,20 @@ function Admin() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(adminData);
+    dispatch(setAdminData(adminData));
+    setAdminData({
+      email: "",
+      userType: "",
+      project: "",
+    });
+  };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setAdminData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   return (
@@ -36,7 +50,7 @@ function Admin() {
       <FormControl className="w-50 row-2 mb-3">
         <FormLabel htmlFor="email-id">Email ID</FormLabel>
         <TextField
-          name="email-id"
+          name="email"
           id="email-id"
           type="email"
           placeholder="Enter Your Email.."
@@ -45,30 +59,26 @@ function Admin() {
           fullWidth
           variant="outlined"
           value={adminData.email}
-          onChange={(e) => {
-            setAdminData({ ...adminData, email: e.target.value });
-          }}
+          onChange={handleChange}
         />
       </FormControl>
       <FormControl className="w-50 row-2 mb-3">
-        <FormLabel htmlFor="email-id">User Type</FormLabel>
+        <FormLabel htmlFor="userType">User Type</FormLabel>
         <NativeSelect
+          name="userType"
           value={adminData.userType}
-          onChange={(e) => {
-            setAdminData({ ...adminData, userType: e.target.value });
-          }}
+          onChange={handleChange}
         >
           <option value={"user"}>User</option>
           <option value={"admin"}>Admin</option>
         </NativeSelect>
       </FormControl>
       <FormControl className="w-50 row-2 mb-3">
-        <FormLabel htmlFor="email-id">Project</FormLabel>
+        <FormLabel htmlFor="project">Project</FormLabel>
         <NativeSelect
+          name="project"
           value={adminData.project}
-          onChange={(e) => {
-            setAdminData({ ...adminData, project: e.target.value });
-          }}
+          onChange={handleChange}
         >
           <option value={"Jira Project"}>JIRA Project</option>
           <option value={"Comcast Project"}>Comcast Project</option>

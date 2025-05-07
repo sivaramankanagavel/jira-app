@@ -34,7 +34,7 @@ function SideNav({ signInText }) {
         <div className="d-flex flex-row flex-wrap justify-content-center align-items-center side-nav-bar__user-name">
           <Avatar
             alt={user?.displayName}
-            src={user.photoURL}
+            src={user?.photoURL}
             sx={{ width: 35, height: 35 }}
             id="user-name"
           />

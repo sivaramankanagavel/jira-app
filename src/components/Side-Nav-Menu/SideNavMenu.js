@@ -8,9 +8,9 @@ import {
   Collapse,
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 import "./styles.scss";
-import { useNavigate } from "react-router-dom";
 
 function SideNavMenu() {
   const [open, setOpen] = useState(false);
@@ -22,6 +22,8 @@ function SideNavMenu() {
       setOpen(!open);
     }else if(item.name === "Admin"){
       navigate("/admin");
+    }else if(item.name === "Board"){
+      navigate("/board");
     }else if(item.name === "Home"){
       navigate("/");
     }

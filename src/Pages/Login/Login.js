@@ -10,9 +10,9 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { loginWithGoogle } from "../../redux-store/slice/login-slice";
 import LoginIcon from '@mui/icons-material/Login';
+import { useNavigate } from "react-router-dom";
 
 import "./styles.scss";
-import { useNavigate } from "react-router-dom";
 
 function Login() {
   const dispatch = useDispatch();

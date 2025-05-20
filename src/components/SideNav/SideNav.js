@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Button } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Link } from "react-router-dom";
@@ -9,12 +9,15 @@ import Avatar from "@mui/material/Avatar";
 import { Tooltip } from "react-tooltip";
 import { useNavigate } from "react-router-dom";
 import SideNavMenu from "../Side-Nav-Menu/SideNavMenu";
+import CloseIcon from "@mui/icons-material/Close";
+import { toggleSidenav } from "../../redux-store/slice/sidenav-slice";
 
 import "./styles.scss";
 
 function SideNav({ signInText }) {
   const isLoggedIn = useSelector((state) => state?.login?.isLoggedIn);
   const user = useSelector((state) => state?.login?.user);
+  const sidenavOpen = useSelector((state) => state?.sidenav?.isOpen);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -28,8 +31,23 @@ function SideNav({ signInText }) {
       navigate("/login");
     }
   }, [isLoggedIn]);
+
+  const handleSideNavToggle = () => {
+    dispatch(toggleSidenav());
+  };
   return (
-    <div className="side-nav-bar w-25 h-100 row col-2 p-0 m-auto d-flex align-items-center flex-wrap">
+    <div className={`side-nav-bar ${sidenavOpen ? "open" : ""}`}>
+      {sidenavOpen && (
+        <div className="row col-12 d-flex justify-content-end align-items-end">
+          <IconButton
+            aria-label="sidenav-close"
+            className="w-25 side-nav-bar__close"
+            onClick={() => handleSideNavToggle()}
+          >
+            <CloseIcon />
+          </IconButton>
+        </div>
+      )}
       {isLoggedIn && (
         <div className="d-flex flex-row flex-wrap justify-content-center align-items-center side-nav-bar__user-name">
           <Avatar
@@ -47,7 +65,7 @@ function SideNav({ signInText }) {
           <SideNavMenu />
         </div>
       )}
-      <div className="side-nav-bar__sign-in">
+      <div className={"side-nav-bar__sign-in"}>
         {!isLoggedIn && (
           <Button
             variant="contained"

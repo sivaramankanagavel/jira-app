@@ -6,15 +6,15 @@ import Login from "../Login/Login";
 import ProtectedRoute from "../../components/ProtectedRoute/ProtectedRoute";
 import Projects from "../Projects/Projects";
 import Admin from "../Admin/Admin";
+import IndividualProject from "../IndividualProject/IndividualProject";
+import KanbanBoardContainer from "../../components/KanbanBoard-Container/KanbanBoardContainer";
 
 import "./styles.scss";
-import IndividualProject from "../IndividualProject/IndividualProject";
-
 
 function Home() {
   return (
-    <div className="home-container w-100 col-12 p-0 m-0">
-      <div className="home-container__main w-100 row col-12 p-0 m-0">
+    <div className="home-container w-100 row-12 p-0 m-0">
+      <div className="h-100 w-100 row-12 p-0 m-0">
         <SideNav signInText={"Log In"} />
         <Routes>
           <Route path="/" element={<MainPanel />}>
@@ -48,6 +48,14 @@ function Home() {
               element={
                 <ProtectedRoute>
                   <Admin />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="board"
+              element={
+                <ProtectedRoute>
+                  <KanbanBoardContainer />
                 </ProtectedRoute>
               }
             />

@@ -20,13 +20,15 @@ function MainPanel() {
   };
 
   return (
-    <div className={`main-panel ${isSidenavOpen ? "shifted h-100 w-100" : "h-100 w-100"}`}>
-      <div className="main-panel__breadcrumbs h-10 w-100 row p-0 m-auto">
+    <div
+      className={`main-panel ${
+        isSidenavOpen ? "shifted h-100 w-100" : "h-100 w-100"
+      }`}
+    >
+      <div className="main-panel__breadcrumbs h-10 w-100 row p-0 m-0 d-flex flex-column align-items-center">
         {!isSidenavOpen && (
           <IconButton
-            className={
-              !isSidenavOpen ? "main-panel__menu-icon w-auto" : "d-none"
-            }
+            className={!isSidenavOpen ? "main-panel__menu-icon w-10 h-100" : "d-none"}
             onClick={() => isLoggedIn && handleSidenavToggle()}
           >
             <MenuIcon />

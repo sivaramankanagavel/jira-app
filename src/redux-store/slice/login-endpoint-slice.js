@@ -1,0 +1,60 @@
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+
+// LOGIN END POINT URL:
+const api = "http://localhost:8080/api/auth/login?email=";
+
+const initialState = {
+  userData: {
+    readonly: null,
+    isAdmin: null,
+    userId: null,
+    isError: null,
+    jwt: "",
+    isTaskCreator: null,
+    expiration: null,
+  },
+  isError: false,
+  isPending: false,
+};
+
+const loginEndpointSlice = createSlice({
+  name: "loginEndpoint",
+  initialState: initialState,
+  extraReducers: (builder) => {
+    builder
+      .addCase(loginEndPointAsyncFunc.pending, (state) => {
+        state.isPending = true;
+      })
+      .addCase(loginEndPointAsyncFunc.fulfilled, (state, action) => {
+        state.userData = action.payload;
+        state.isError = false;
+        state.isPending = false;
+      })
+      .addCase(loginEndPointAsyncFunc.rejected, (state, action) => {
+        state.isError = true;
+        state.isPending = false;
+      });
+  },
+});
+
+export const { login, logout } = loginEndpointSlice.actions;
+export default loginEndpointSlice;
+
+export const loginEndPointAsyncFunc = createAsyncThunk(
+  "loginEndpoint/login",
+  (userEmail) => {
+    return axios
+      .post(`${api + userEmail}`)
+      .then((response) => {
+        console.log(response?.data);
+        localStorage.setItem("jwt", response.data.jwt);
+        return {
+          userData: response?.data,
+        };
+      })
+      .catch(() => ({
+        isError: true,
+      }));
+  }
+);

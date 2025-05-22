@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import GoogleIcon from "@mui/icons-material/Google";
 import {
   Button,
@@ -9,14 +9,22 @@ import {
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { loginWithGoogle } from "../../redux-store/slice/login-slice";
-import LoginIcon from '@mui/icons-material/Login';
+import LoginIcon from "@mui/icons-material/Login";
 import { useNavigate } from "react-router-dom";
+import { loginEndPointAsyncFunc } from "../../redux-store/slice/login-endpoint-slice";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
 import "./styles.scss";
+import { fetchProjects } from "../../redux-store/slice/project-slice";
 
 function Login() {
+  const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state?.login?.isLoggedIn);
+  const userLoginDetail = useSelector((state) => state?.login?.user);
+  const userData = useSelector((state) => state?.loginEndpoint?.userData?.userData);
+  const userStatus = useSelector((state) => state?.loginEndpoint);
   const navigate = useNavigate();
 
   const handleSubmit = (event) => {
@@ -25,14 +33,35 @@ function Login() {
   };
 
   useEffect(() => {
-    if(isLoggedIn){
-      navigate('/')
+    console.log(userLoginDetail, isLoggedIn);
+    console.log(userStatus.isPending, userStatus.isError, userData);
+    if (isLoggedIn) {
+      if (
+        userData['userId'] &&
+        userStatus.isPending === false &&
+        userStatus.isError === false
+      ) {
+        navigate("/");
+      } else if (userStatus.isPending === false && userStatus.isError === true) {
+        setOpen(true);
+      } else if (userData['userId'] === null && userStatus.isPending !== true) {
+        dispatch(loginEndPointAsyncFunc(userLoginDetail['email']));
+      }
     }
-  }, [isLoggedIn])
+  }, [isLoggedIn, userData]);
+
+  useEffect(() => {
+    if(userData['userId'] !== null){
+      console.log("USER ID:--->", userData['userId'])
+      dispatch(fetchProjects(userData['userId']));
+    }
+  }, [userData]);
 
   return (
     <div className="login-container d-flex flex-wrap flex-column justify-content-center align-items-center">
-      <h1 className="login-container__heading">Login <LoginIcon sx={{ fontSize: 50 }}/></h1>
+      <h1 className="login-container__heading">
+        Login <LoginIcon sx={{ fontSize: 50 }} />
+      </h1>
       <FormControl className="w-50 row-2 mb-2">
         <FormLabel htmlFor="email-id">Email Id</FormLabel>
         <TextField
@@ -76,6 +105,21 @@ function Login() {
       >
         Sign in with Google
       </Button>
+      <Snackbar
+        open={open}
+        autoHideDuration={5000}
+        onClose={() => setOpen(false)}
+      >
+        <Alert
+          onClose={() => setOpen(false)}
+          variant="filled"
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          User was Not Registerd for this JIRA Account. Please contact your
+          Admin.
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

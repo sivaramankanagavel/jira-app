@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import {
   Box,
@@ -8,16 +8,21 @@ import {
   Modal,
   TextField,
   IconButton,
+  Card,
+  CardContent,
+  Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useDispatch, useSelector } from "react-redux";
-import { addProject, resetProjectData } from "../../redux-store/slice/add-project-slice";
+import { addProject } from "../../redux-store/slice/add-project-slice";
+import { getTasks } from "../../redux-store/slice/tasks-slice";
 
 import "./styles.scss";
+import { useNavigate } from "react-router-dom";
 
 function Projects() {
   const [showProjectModel, setShowProjectModel] = useState(false);
-  const [projectData, setProjectData] = useState({
+  const [projectCreationData, setprojectCreationData] = useState({
     projectName: "",
     projectDescription: "",
     ownerId: "",
@@ -26,8 +31,11 @@ function Projects() {
     createdAt: "",
   });
   const dispatch = useDispatch();
-  const projectDataFromStore = useSelector((state) => state?.addProject);
-  const { projectName, projectDescription, ownerId, startDate, endDate, createdAt } = projectDataFromStore;
+  const naviagte = useNavigate()
+  const userData = useSelector((state) => state?.loginEndpoint?.userData?.userData);
+  const projectsDataFromStore =
+    useSelector((state) => state?.projectsData?.projects) || [];
+  const isAdmin = useSelector((state) => state?.loginEndpoint?.isAdmin);
 
   const handleProjectAdd = () => {
     setShowProjectModel(true);
@@ -35,7 +43,7 @@ function Projects() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProjectData((prevData) => ({
+    setprojectCreationData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
@@ -43,22 +51,73 @@ function Projects() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(addProject(projectData));
+    dispatch(addProject(projectCreationData));
     setShowProjectModel(false);
-  }
+  };
+
+  // Handle card click to navigate to tasks page
+  const handleCardClick = (projectId) => {
+    dispatch(getTasks({projectId: projectId, userId: userData.userId}));
+    naviagte(`/projects/${projectId}`);
+  };
 
   return (
-    <div className="d-flex flex-wrap row-8 w-100 h-100 p-0 m-0 justify-content-center align-items-center">
-      <div>
-        <Button
-          variant="contained"
-          className="w-100 row-1 mb-2"
-          startIcon={<AddIcon />}
-          onClick={handleProjectAdd}
-        >
-          Add Project
-        </Button>
-      </div>
+    <div className="d-flex flex-wrap row-12 w-100 h-100 p-0 m-0 justify-content-center ">
+      {isAdmin && (
+        <div>
+          <Button
+            variant="contained"
+            className="w-100 row-1 mb-2"
+            startIcon={<AddIcon />}
+            onClick={handleProjectAdd}
+            disabled={!isAdmin}
+          >
+            Add Project
+          </Button>
+        </div>
+      )}
+      {projectsDataFromStore.length > 0 ? (
+        <div className="row w-100 p-0 m-0">
+          {projectsDataFromStore.map((project) => (
+            <div
+              key={project.id}
+              className="col-3 col-md-6 col-lg-4 mb-3 pt-3 h-50"
+              style={{ cursor: "pointer" }}
+              onClick={() => handleCardClick(project.id)}
+            >
+              <Card variant="outlined" sx={{ "&:hover": { boxShadow: 6 } }}>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>
+                    {project.name}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {project.description}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                    mt={1}
+                  >
+                    Owner: {project.ownerId}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    display="block"
+                  >
+                    Start: {project.startDate} | End: {project.endDate}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <Typography variant="h6" color="text.secondary" className="mt-4">
+          No Projects assigned
+        </Typography>
+      )}
       <Modal
         open={showProjectModel}
         onClose={() => setShowProjectModel(false)}
@@ -108,7 +167,7 @@ function Projects() {
                   required
                   fullWidth
                   variant="outlined"
-                  value={projectData.projectName}
+                  value={projectCreationData.projectName}
                   onChange={handleChange}
                 />
               </FormControl>
@@ -126,7 +185,7 @@ function Projects() {
                   required
                   fullWidth
                   variant="outlined"
-                  value={projectData.projectDescription}
+                  value={projectCreationData.projectDescription}
                   onChange={handleChange}
                 />
               </FormControl>
@@ -142,7 +201,7 @@ function Projects() {
                   required
                   fullWidth
                   variant="outlined"
-                  value={projectData.ownerId}
+                  value={projectCreationData.ownerId}
                   onChange={handleChange}
                 />
               </FormControl>
@@ -158,7 +217,7 @@ function Projects() {
                   required
                   fullWidth
                   variant="outlined"
-                  value={projectData.startDate}
+                  value={projectCreationData.startDate}
                   onChange={handleChange}
                 />
               </FormControl>
@@ -174,7 +233,7 @@ function Projects() {
                   required
                   fullWidth
                   variant="outlined"
-                  value={projectData.endDate}
+                  value={projectCreationData.endDate}
                   onChange={handleChange}
                 />
               </FormControl>
@@ -190,7 +249,7 @@ function Projects() {
                   required
                   fullWidth
                   variant="outlined"
-                  value={projectData.createdAt}
+                  value={projectCreationData.createdAt}
                   onChange={handleChange}
                 />
               </FormControl>
@@ -206,7 +265,9 @@ function Projects() {
               </Button>
             </div>
             <div className="d-flex col-6 align-item-center justify-content-center">
-              <Button variant="contained" onClick={handleSubmit}>Submit</Button>
+              <Button variant="contained" onClick={handleSubmit}>
+                Submit
+              </Button>
             </div>
           </div>
         </Box>

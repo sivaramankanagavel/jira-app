@@ -13,6 +13,7 @@ import "./styles.scss";
 function MainPanel() {
   const isSidenavOpen = useSelector((state) => state?.sidenav?.isOpen);
   const isLoggedIn = useSelector((state) => state?.login?.isLoggedIn);
+  const userId = useSelector((state) => state?.loginEndpoint?.userId);
   const dispatch = useDispatch();
 
   const handleSidenavToggle = () => {
@@ -26,10 +27,12 @@ function MainPanel() {
       }`}
     >
       <div className="main-panel__breadcrumbs h-10 w-100 row p-0 m-0 d-flex flex-column align-items-center">
-        {!isSidenavOpen && (
+        {!isSidenavOpen && isLoggedIn && userId !== null && (
           <IconButton
-            className={!isSidenavOpen ? "main-panel__menu-icon w-10 h-100" : "d-none"}
-            onClick={() => isLoggedIn && handleSidenavToggle()}
+            className={
+              !isSidenavOpen ? "main-panel__menu-icon w-10 h-100" : "m-100"
+            }
+            onClick={() => handleSidenavToggle()}
           >
             <MenuIcon />
           </IconButton>

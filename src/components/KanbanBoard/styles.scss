@@ -1,9 +1,5 @@
 .kanban-board-container {
   display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  width: 100%;
-  height: 100%;
   overflow-x: auto;
   overflow-y: hidden;
   padding: 1rem;

@@ -43,14 +43,20 @@ export default loginEndpointSlice;
 
 export const loginEndPointAsyncFunc = createAsyncThunk(
   "loginEndpoint/login",
-  (userEmail) => {
+  async ({ userEmail }) => {
     return axios
       .post(`${api + userEmail}`)
       .then((response) => {
         console.log(response?.data);
         localStorage.setItem("jwt", response.data.jwt);
         return {
-          userData: response?.data,
+          readonly: response?.data?.readonly,
+          isAdmin: response?.data?.isAdmin,
+          userId: response?.data?.userId,
+          isError: response?.data?.isError,
+          jwt: response?.data?.jwt,
+          isTaskCreator: response?.data?.isTaskCreator,
+          expiration: response?.data?.expiration,
         };
       })
       .catch(() => ({

@@ -23,7 +23,7 @@ function Login() {
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state?.login?.isLoggedIn);
   const userLoginDetail = useSelector((state) => state?.login?.user);
-  const userData = useSelector((state) => state?.loginEndpoint?.userData?.userData);
+  const userData = useSelector((state) => state?.loginEndpoint?.userData);
   const userStatus = useSelector((state) => state?.loginEndpoint);
   const navigate = useNavigate();
 
@@ -33,8 +33,6 @@ function Login() {
   };
 
   useEffect(() => {
-    console.log(userLoginDetail, isLoggedIn);
-    console.log(userStatus.isPending, userStatus.isError, userData);
     if (isLoggedIn) {
       if (
         userData['userId'] &&
@@ -45,15 +43,14 @@ function Login() {
       } else if (userStatus.isPending === false && userStatus.isError === true) {
         setOpen(true);
       } else if (userData['userId'] === null && userStatus.isPending !== true) {
-        dispatch(loginEndPointAsyncFunc(userLoginDetail['email']));
+        dispatch(loginEndPointAsyncFunc({userEmail: userLoginDetail['email']}));
       }
     }
   }, [isLoggedIn, userData]);
 
   useEffect(() => {
     if(userData['userId'] !== null){
-      console.log("USER ID:--->", userData['userId'])
-      dispatch(fetchProjects(userData['userId']));
+      dispatch(fetchProjects({userId: userData['userId']}));
     }
   }, [userData]);
 

@@ -2,44 +2,69 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const api = `http://localhost:8080/api/tasks/assigned?`;
+const apiUpdate = `http://localhost:8080/api/tasks/update-status`;
 
-const tasksInitialState = {
-  tasks: [],
+const ticketInitialState = {
+  tickets: [],
   isError: false,
   isPending: false,
+  projectId: null,
 };
 
-const getTasksBasedOnProject = createSlice({
+const getTicketsBasedOnProject = createSlice({
   name: "get-task-based-on-projects",
-  initialState: tasksInitialState,
+  initialState: ticketInitialState,
   extraReducers: (builder) => {
     builder
-      .addCase(getTasks.pending, (state, action) => {
+      .addCase(getTickets.pending, (state, action) => {
         state.isPending = true;
       })
-      .addCase(getTasks.fulfilled, (state, action) => {
-        state.tasks = action.payload;
+      .addCase(getTickets.fulfilled, (state, action) => {
+        state.tickets = action.payload;
+        state.projectId = action.meta.arg.projectId;
         state.isPending = false;
       })
-      .addCase(getTasks.rejected, (state, action) => {
+      .addCase(getTickets.rejected, (state, action) => {
         state.isError = true;
       });
   },
 });
 
-export default getTasksBasedOnProject;
+export default getTicketsBasedOnProject;
 
-export const getTasks = createAsyncThunk(
+export const getTickets = createAsyncThunk(
   "get the task based on userId and ProjectId",
-  async ({projectId, userId}) => {
-    console.log(projectId, userId);
+  async ({ projectId, userId }) => {
     return axios
       .get(`${api + `userId=${userId}` + `&projectId=${projectId}`}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("jwt")}`,
         },
       })
-      .then((result) => result?.data)
+      .then((result) => {
+        console.log(result);
+        return result?.data;
+      })
+      .catch((error) => error);
+  }
+);
+
+export const updateTaskStatus = createAsyncThunk(
+  "Update Task Status",
+  async ({ userId, projectId, taskId, status }) => {
+    return axios
+      .put(
+        `${apiUpdate}`,
+        { userId, projectId, taskId, status },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          },
+        }
+      )
+      .then((result) => {
+        return result?.data;
+      })
       .catch((error) => error);
   }
 );

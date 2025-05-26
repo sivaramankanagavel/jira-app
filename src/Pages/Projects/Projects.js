@@ -15,10 +15,10 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { useDispatch, useSelector } from "react-redux";
 import { addProject } from "../../redux-store/slice/add-project-slice";
-import { getTasks } from "../../redux-store/slice/tasks-slice";
+import { getTickets } from "../../redux-store/slice/tasks-slice";
+import { useNavigate } from "react-router-dom";
 
 import "./styles.scss";
-import { useNavigate } from "react-router-dom";
 
 function Projects() {
   const [showProjectModel, setShowProjectModel] = useState(false);
@@ -32,7 +32,7 @@ function Projects() {
   });
   const dispatch = useDispatch();
   const naviagte = useNavigate()
-  const userData = useSelector((state) => state?.loginEndpoint?.userData?.userData);
+  const userData = useSelector((state) => state?.loginEndpoint?.userData);
   const projectsDataFromStore =
     useSelector((state) => state?.projectsData?.projects) || [];
   const isAdmin = useSelector((state) => state?.loginEndpoint?.isAdmin);
@@ -57,7 +57,7 @@ function Projects() {
 
   // Handle card click to navigate to tasks page
   const handleCardClick = (projectId) => {
-    dispatch(getTasks({projectId: projectId, userId: userData.userId}));
+    dispatch(getTickets({projectId: projectId, userId: userData.userId}));
     naviagte(`/projects/${projectId}`);
   };
 

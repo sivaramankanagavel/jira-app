@@ -30,7 +30,7 @@ export default projectSlice;
 
 export const fetchProjects = createAsyncThunk(
   "fetch projects based on their userId",
-  async(userId) => {
+  async({userId}) => {
     return axios
       .get(`http://localhost:8080/api/projects/user/${userId}`, {
         headers: {

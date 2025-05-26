@@ -46,7 +46,6 @@ const KanbanBoard = () => {
                 {...provided.droppableProps}
                 sx={{
                   p: 2,
-                  backgroundColor: "#f4f4f4",
                 }}
                 className="h-100 w-50 d-flex flex-column"
               >

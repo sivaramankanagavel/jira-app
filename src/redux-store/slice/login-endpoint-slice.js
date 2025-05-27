@@ -47,7 +47,6 @@ export const loginEndPointAsyncFunc = createAsyncThunk(
     return axios
       .post(`${api + userEmail}`)
       .then((response) => {
-        console.log(response?.data);
         localStorage.setItem("jwt", response.data.jwt);
         return {
           readonly: response?.data?.readonly,

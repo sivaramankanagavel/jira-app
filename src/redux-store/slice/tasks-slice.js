@@ -3,6 +3,7 @@ import axios from "axios";
 
 const api = `http://localhost:8080/api/tasks/assigned?`;
 const apiUpdate = `http://localhost:8080/api/tasks/update-status`;
+const apiAddTask = `http://localhost:8080/api/tasks`;
 
 const ticketInitialState = {
   tickets: [],
@@ -42,7 +43,6 @@ export const getTickets = createAsyncThunk(
         },
       })
       .then((result) => {
-        console.log(result);
         return result?.data;
       })
       .catch((error) => error);
@@ -68,3 +68,21 @@ export const updateTaskStatus = createAsyncThunk(
       .catch((error) => error);
   }
 );
+
+export const addTask = createAsyncThunk("Create Task", async ({ taskData }) => {
+  const { description, dueDate, assigneeId, projectId, ownerId } = taskData;
+  return axios
+    .post(
+      `${apiAddTask}`,
+      { description, dueDate, assigneeId, projectId, ownerId },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        },
+      }
+    )
+    .then((result) => {
+      return result?.data;
+    })
+    .catch((error) => error);
+});

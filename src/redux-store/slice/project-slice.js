@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const projectsApi = process.env.REACT_APP_API_PROJECTS;
+
 const initialState = {
   projects: [],
   isPending: false,
@@ -32,7 +34,7 @@ export const fetchProjects = createAsyncThunk(
   "fetch projects based on their userId",
   async({userId}) => {
     return axios
-      .get(`http://localhost:8080/api/projects/user/${userId}`, {
+      .get(`${projectsApi}+${userId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("jwt")}`
         },

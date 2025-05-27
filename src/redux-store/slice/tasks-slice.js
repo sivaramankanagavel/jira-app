@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const api = `http://localhost:8080/api/tasks/assigned?`;
-const apiUpdate = `http://localhost:8080/api/tasks/update-status`;
-const apiAddTask = `http://localhost:8080/api/tasks`;
+const api = process.env.REACT_APP_API_TASKS_ASSIGNED;
+const apiUpdate = process.env.REACT_APP_API_TASKS_UPDATE;
+const apiAddTask = process.env.REACT_APP_API_TASKS_ADD;
 
 const ticketInitialState = {
   tickets: [],

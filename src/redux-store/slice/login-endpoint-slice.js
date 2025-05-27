@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 // LOGIN END POINT URL:
-const api = "http://localhost:8080/api/auth/login?email=";
+const loginApi = process.env.REACT_APP_LOGIN_ENDPOINT;
 
 const initialState = {
   userData: {
@@ -45,7 +45,7 @@ export const loginEndPointAsyncFunc = createAsyncThunk(
   "loginEndpoint/login",
   async ({ userEmail }) => {
     return axios
-      .post(`${api + userEmail}`)
+      .post(`${loginApi + userEmail}`)
       .then((response) => {
         localStorage.setItem("jwt", response.data.jwt);
         return {

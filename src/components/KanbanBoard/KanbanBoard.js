@@ -86,9 +86,9 @@ const KanbanBoard = () => {
                   <Typography variant="h6" gutterBottom>
                     {statusLabels[status] || status}
                   </Typography>
-                  {tickets
-                    ?.filter((ticket) => ticket.status === status)
-                    ?.map((ticket, index) => (
+                  {(Array.isArray(tickets) ? tickets : [])
+                    .filter((ticket) => ticket.status === status)
+                    .map((ticket, index) => (
                       <Draggable
                         key={ticket.id}
                         draggableId={String(ticket.id)}

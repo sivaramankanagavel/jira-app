@@ -76,9 +76,9 @@ function Projects() {
           </Button>
         </div>
       )}
-      {projectsDataFromStore.length > 0 ? (
+      {projectsDataFromStore?.length > 0 ? (
         <div className="row w-100 p-0 m-0">
-          {projectsDataFromStore.map((project) => (
+          {projectsDataFromStore?.map((project) => (
             <div
               key={project.id}
               className="col-3 col-md-6 col-lg-4 mb-3 pt-3 h-50"

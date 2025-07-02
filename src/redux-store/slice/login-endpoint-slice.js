@@ -45,7 +45,7 @@ export const loginEndPointAsyncFunc = createAsyncThunk(
   "loginEndpoint/login",
   async ({ userEmail }) => {
     return axios
-      .post(`${loginApi + userEmail}`)
+      .post(`${loginApi + userEmail}`, {}, { withCredentials: true })
       .then((response) => {
         localStorage.setItem("jwt", response.data.jwt);
         return {

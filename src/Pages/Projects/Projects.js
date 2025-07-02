@@ -57,8 +57,12 @@ function Projects() {
 
   // Handle card click to navigate to tasks page
   const handleCardClick = (projectId) => {
-    dispatch(getTickets({projectId: projectId, userId: userData.userId}));
-    naviagte(`/projects/${projectId}`);
+    if (userData?.userId) {
+      dispatch(getTickets({projectId: projectId, userId: userData.userId}));
+      naviagte(`/projects/${projectId}`);
+    } else {
+      // Optionally show an error or redirect to login
+    }
   };
 
   return (

@@ -34,10 +34,11 @@ export const fetchProjects = createAsyncThunk(
   "fetch projects based on their userId",
   async({userId}) => {
     return axios
-      .get(`${projectsApi}+${userId}`, {
+      .get(`${projectsApi}${userId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("jwt")}`
         },
+        withCredentials: true
       })
       .then((response) => response?.data)
       .catch((error) => error?.message);

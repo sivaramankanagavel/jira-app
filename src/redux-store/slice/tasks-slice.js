@@ -41,6 +41,7 @@ export const getTickets = createAsyncThunk(
         headers: {
           Authorization: `Bearer ${localStorage.getItem("jwt")}`,
         },
+        withCredentials: true, // Added here
       })
       .then((result) => {
         return result?.data;
@@ -60,6 +61,7 @@ export const updateTaskStatus = createAsyncThunk(
           headers: {
             Authorization: `Bearer ${localStorage.getItem("jwt")}`,
           },
+          withCredentials: true,
         }
       )
       .then((result) => {
@@ -79,6 +81,7 @@ export const addTask = createAsyncThunk("Create Task", async ({ taskData }) => {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("jwt")}`,
         },
+        withCredentials: true,
       }
     )
     .then((result) => {

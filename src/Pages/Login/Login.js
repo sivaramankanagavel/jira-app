@@ -43,7 +43,9 @@ function Login() {
       } else if (userStatus.isPending === false && userStatus.isError === true) {
         setOpen(true);
       } else if (userData['userId'] === null && userStatus.isPending !== true) {
-        dispatch(loginEndPointAsyncFunc({userEmail: userLoginDetail['email']}));
+        if (userLoginDetail['email']) {
+          dispatch(loginEndPointAsyncFunc({userEmail: userLoginDetail['email']}));
+        }
       }
     }
   }, [isLoggedIn, userData]);

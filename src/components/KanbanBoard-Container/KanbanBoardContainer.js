@@ -25,7 +25,7 @@ const KanbanBoardContainer = () => {
   const [taskCreationData, setTaskCreationData] = useState({
     description: "",
     dueDate: null,
-    assigneeId: null
+    assigneeId: null,
   });
   const userData = useSelector((state) => state?.loginEndpoint?.userData);
   const projectId = useSelector((state) => state?.ticketsData?.projectId);
@@ -51,30 +51,19 @@ const KanbanBoardContainer = () => {
     }));
   };
 
-  // Handle form submission for task creation
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (taskCreationData.description && taskCreationData.dueDate) {
-      const taskData = {
-        ...taskCreationData,
-        projectId: projectId,
-        ownerId: userData?.userId,
-        assigneeId: userData?.userId
-      };
-      dispatch(addTask({ taskData: taskData })).then(() => {
-        dispatch(getTickets({ projectId, userId: userData?.userId }));
-        setIsOpen(false);
-        setTaskCreationData({
-          description: "",
-          dueDate: null,
-          projectId: null,
-          ownerId: null,
-          assigneeId: null
-        });
-      });
-    } else {
-      alert("Please fill in all fields.");
-    }
+    const taskData = {
+      description: taskCreationData.description,
+      dueDate: taskCreationData.dueDate,
+      assigneeId: userData?.userId,
+      projectId: projectId,
+      ownerId: userData?.userId,
+    };
+
+    dispatch(addTask({ taskData })).then(() => {
+      dispatch(getTickets({ projectId, userId: userData?.userId }));
+    });
   };
 
   return (

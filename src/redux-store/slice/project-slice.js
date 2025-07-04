@@ -1,7 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
-
-const projectsApi = process.env.REACT_APP_API_PROJECTS;
+import axios from '../../utils/axiosConfig';
 
 const initialState = {
   projects: [],
@@ -30,17 +28,20 @@ const projectSlice = createSlice({
 
 export default projectSlice;
 
+// Update fetchProjects thunk
 export const fetchProjects = createAsyncThunk(
   "fetch projects based on their userId",
-  async({userId}) => {
+  async ({ userId }) => {
     return axios
-      .get(`${projectsApi}${userId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("jwt")}`
-        },
-        withCredentials: true
+      // Change from /user/${userId} to ?userId=${userId}
+      .get(`${process.env.REACT_APP_API_PROJECTS_USER}?userId=${userId}`)
+      .then((response) => {
+        console.log("Projects response:", response.data);
+        return response?.data?.map(project => ({
+          ...project,
+          id: project._id,
+          ownerName: project.ownerId?.name || 'Unknown'
+        }));
       })
-      .then((response) => response?.data)
-      .catch((error) => error?.message);
   }
 );

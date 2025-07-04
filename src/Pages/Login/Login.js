@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import GoogleIcon from "@mui/icons-material/Google";
 import {
   Button,
@@ -14,12 +14,13 @@ import { useNavigate } from "react-router-dom";
 import { loginEndPointAsyncFunc } from "../../redux-store/slice/login-endpoint-slice";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import { fetchProjects } from "../../redux-store/slice/project-slice";
 
 import "./styles.scss";
-import { fetchProjects } from "../../redux-store/slice/project-slice";
 
 function Login() {
   const [open, setOpen] = useState(false);
+  const [loginAttempted, setLoginAttempted] = useState(false);
   const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state?.login?.isLoggedIn);
   const userLoginDetail = useSelector((state) => state?.login?.user);
@@ -29,32 +30,50 @@ function Login() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setLoginAttempted(false);
     dispatch(loginWithGoogle());
   };
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      if (
-        userData['userId'] &&
-        userStatus.isPending === false &&
-        userStatus.isError === false
-      ) {
-        navigate("/");
-      } else if (userStatus.isPending === false && userStatus.isError === true) {
-        setOpen(true);
-      } else if (userData['userId'] === null && userStatus.isPending !== true) {
-        if (userLoginDetail['email']) {
-          dispatch(loginEndPointAsyncFunc({userEmail: userLoginDetail['email']}));
-        }
-      }
+  // Wrap in useCallback to prevent unnecessary recreations
+  const handleLoginEndpoint = useCallback(() => {
+    if (
+      !loginAttempted &&
+      userLoginDetail?.email &&
+      !userData?.userId &&
+      !userStatus.isPending
+    ) {
+      setLoginAttempted(true);
+      dispatch(
+        loginEndPointAsyncFunc({
+          email: userLoginDetail.email,
+          name: userLoginDetail.displayName,
+          oauthProviderId: userLoginDetail.providerId,
+        })
+      );
     }
-  }, [isLoggedIn, userData]);
+  }, [loginAttempted, userLoginDetail, userData, userStatus, dispatch]);
+
+  const handleLoginSuccess = useCallback(() => {
+    if (userData?.userId) {
+      // 1. Fetch projects for the user
+      dispatch(fetchProjects({ userId: userData.userId }));
+
+      // 2. Navigate to home
+      navigate("/");
+    }
+  }, [userData, dispatch, navigate]);
 
   useEffect(() => {
-    if(userData['userId'] !== null){
-      dispatch(fetchProjects({userId: userData['userId']}));
+    if (isLoggedIn) {
+    if (userData?.userId && !userStatus.isPending && !userStatus.isError) {
+      handleLoginSuccess();
+    } else if (userStatus.isPending === false && userStatus.isError === true) {
+      setOpen(true);
+    } else {
+      handleLoginEndpoint();
     }
-  }, [userData]);
+  }
+  }, [isLoggedIn, userData, userStatus, handleLoginEndpoint, handleLoginSuccess]);
 
   return (
     <div className="login-container d-flex flex-wrap flex-column justify-content-center align-items-center">

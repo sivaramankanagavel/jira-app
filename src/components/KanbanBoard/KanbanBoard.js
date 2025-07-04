@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Box, Paper, Typography, Card, CardContent } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { updateTaskStatus, getTickets } from "../../redux-store/slice/tasks-slice";
+import {
+  updateTaskStatus,
+  getTickets,
+} from "../../redux-store/slice/tasks-slice";
 import CircularProgress from "@mui/material/CircularProgress";
 
 import "./styles.scss";
@@ -37,18 +40,17 @@ const KanbanBoard = () => {
     COMPLETED: "Completed",
   };
 
+  // Update onDragEnd
   const onDragEnd = (result) => {
     const { destination, draggableId } = result;
     if (!destination) return;
     dispatch(
       updateTaskStatus({
-        userId: userData.userId,
-        projectId: projectId,
-        taskId: Number(draggableId),
+        taskId: draggableId,
         status: destination.droppableId,
       })
     ).then(() => {
-      dispatch(getTickets({ projectId: projectId, userId: userData.userId }));
+      dispatch(getTickets({ projectId, userId: userData.userId }));
     });
   };
 
@@ -65,9 +67,9 @@ const KanbanBoard = () => {
           display="flex"
           alignItems="center"
           justifyContent="center"
-          bgcolor="rgba(255,255,255,0.6)"
+          bgcolor="rgba(255,255,255,0.7)"
         >
-          <CircularProgress />
+          <CircularProgress size={60} />
         </Box>
       )}
       <DragDropContext onDragEnd={onDragEnd} className="p-0">

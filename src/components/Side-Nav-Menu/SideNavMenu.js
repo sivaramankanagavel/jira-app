@@ -15,7 +15,7 @@ import "./styles.scss";
 
 function SideNavMenu() {
   const [open, setOpen] = useState(false);
-  const userDetails = useSelector((state) => state?.loginEndpoint);
+  const userDetails = useSelector((state) => state?.loginEndpoint?.userData);
   const navigate = useNavigate();
 
   const handleClick = (item) => {
@@ -35,7 +35,7 @@ function SideNavMenu() {
     <div>
       {sideNavMenuData.map((item, index) => {
         // Only show Admin if user is admin
-        if (item.name === "Admin" && !userDetails?.isAdmin) return null;
+        if (item.name === "Admin" && userDetails?.role !== "ADMIN") return null;
         return (
           <List key={index} component="nav" aria-labelledby="Main Menu">
             <ListItemButton onClick={() => handleClick(item)}>

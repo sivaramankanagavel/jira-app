@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import {
   Box,
@@ -17,21 +17,23 @@ import { useDispatch, useSelector } from "react-redux";
 import { addProject } from "../../redux-store/slice/add-project-slice";
 import { getTickets } from "../../redux-store/slice/tasks-slice";
 import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
+import { fetchProjects } from '../../redux-store/slice/project-slice';
 
 import "./styles.scss";
 
 function Projects() {
   const [showProjectModel, setShowProjectModel] = useState(false);
   const [projectCreationData, setprojectCreationData] = useState({
-    projectName: "",
-    projectDescription: "",
+    name: "",
+    description: "",
     ownerId: "",
     startDate: "",
     endDate: "",
     createdAt: "",
   });
   const dispatch = useDispatch();
-  const naviagte = useNavigate()
+  const navigate = useNavigate();
   const userData = useSelector((state) => state?.loginEndpoint?.userData);
   const projectsDataFromStore =
     useSelector((state) => state?.projectsData?.projects) || [];
@@ -49,19 +51,29 @@ function Projects() {
     }));
   };
 
+useEffect(() => {
+  if (userData?.userId) {
+    dispatch(fetchProjects({ userId: userData.userId }));
+  }
+}, [userData, dispatch]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(addProject(projectCreationData));
+    e.preventDefault();
+    dispatch(
+      addProject({
+        ...projectCreationData,
+        ownerId: userData.userId,
+      })
+    );
     setShowProjectModel(false);
   };
 
   // Handle card click to navigate to tasks page
   const handleCardClick = (projectId) => {
     if (userData?.userId) {
-      dispatch(getTickets({projectId: projectId, userId: userData.userId}));
-      naviagte(`/projects/${projectId}`);
-    } else {
-      // Optionally show an error or redirect to login
+      dispatch(getTickets({ projectId, userId: userData.userId }));
+      navigate(`/projects/${projectId}`);
     }
   };
 
@@ -95,23 +107,22 @@ function Projects() {
                     {project.name}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {project.description}
+                    {project.description || "No description"}
                   </Typography>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    display="block"
-                    mt={1}
-                  >
-                    Owner: {project.ownerId}
+                  <Typography variant="caption" display="block" mt={1}>
+                    Owner: {project.ownerName}
                   </Typography>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    display="block"
-                  >
-                    Start: {project.startDate} | End: {project.endDate}
+                  <Typography variant="caption" display="block">
+                    Members: {project.memberCount}
                   </Typography>
+                  {project.startDate && (
+                    <Typography variant="caption" display="block">
+                      Dates: {dayjs(project.startDate).format("MMM D")} -{" "}
+                      {project.endDate
+                        ? dayjs(project.endDate).format("MMM D, YYYY")
+                        : "Ongoing"}
+                    </Typography>
+                  )}
                 </CardContent>
               </Card>
             </div>
@@ -163,7 +174,7 @@ function Projects() {
               <FormControl className="w-100">
                 <FormLabel htmlFor="project-name">Project Name</FormLabel>
                 <TextField
-                  name="projectName"
+                  name="name"
                   id="project-name"
                   type="text"
                   placeholder="Enter Your Project Name.."
@@ -171,7 +182,7 @@ function Projects() {
                   required
                   fullWidth
                   variant="outlined"
-                  value={projectCreationData.projectName}
+                  value={projectCreationData.name}
                   onChange={handleChange}
                 />
               </FormControl>
@@ -182,30 +193,14 @@ function Projects() {
                   Project Description
                 </FormLabel>
                 <TextField
-                  name="projectDescription"
+                  name="description"
                   id="project-descr"
                   type="text"
                   placeholder="Enter Your Project Description.."
                   required
                   fullWidth
                   variant="outlined"
-                  value={projectCreationData.projectDescription}
-                  onChange={handleChange}
-                />
-              </FormControl>
-            </div>
-            <div className="col-8 m-0 w-100 mb-3">
-              <FormControl className="w-100">
-                <FormLabel htmlFor="owner-id">Owner ID</FormLabel>
-                <TextField
-                  name="ownerId"
-                  id="owner-id"
-                  type="text"
-                  placeholder="Enter Your Owner ID.."
-                  required
-                  fullWidth
-                  variant="outlined"
-                  value={projectCreationData.ownerId}
+                  value={projectCreationData.description}
                   onChange={handleChange}
                 />
               </FormControl>

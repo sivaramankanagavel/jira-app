@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import axios from "../../utils/axiosConfig";
 
 const api = process.env.REACT_APP_API_TASKS_ASSIGNED;
 const apiUpdate = process.env.REACT_APP_API_TASKS_UPDATE;
@@ -36,56 +36,26 @@ export default getTicketsBasedOnProject;
 export const getTickets = createAsyncThunk(
   "get the task based on userId and ProjectId",
   async ({ projectId, userId }) => {
-    return axios
-      .get(`${api + `userId=${userId}` + `&projectId=${projectId}`}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-        },
-        withCredentials: true, // Added here
-      })
-      .then((result) => {
-        return result?.data;
-      })
-      .catch((error) => error);
+    return axios.get(`${api}?projectId=${projectId}&userId=${userId}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+      },
+      withCredentials: true,
+    });
   }
 );
 
 export const updateTaskStatus = createAsyncThunk(
   "Update Task Status",
-  async ({ userId, projectId, taskId, status }) => {
+  async ({ taskId, status }) => {
     return axios
-      .put(
-        `${apiUpdate}`,
-        { userId, projectId, taskId, status },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-          },
-          withCredentials: true,
-        }
-      )
+      .put(`${process.env.REACT_APP_API_TASKS_UPDATE}/${taskId}`, { status })
       .then((result) => {
         return result?.data;
-      })
-      .catch((error) => error);
+      });
   }
 );
 
 export const addTask = createAsyncThunk("Create Task", async ({ taskData }) => {
-  const { description, dueDate, assigneeId, projectId, ownerId } = taskData;
-  return axios
-    .post(
-      `${apiAddTask}`,
-      { description, dueDate, assigneeId, projectId, ownerId },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-        },
-        withCredentials: true,
-      }
-    )
-    .then((result) => {
-      return result?.data;
-    })
-    .catch((error) => error);
+  return axios.post(process.env.REACT_APP_API_TASKS_ADD, taskData);
 });

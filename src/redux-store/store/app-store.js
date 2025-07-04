@@ -17,6 +17,10 @@ const store = configureStore({
     projectsData: projectSlice.reducer,
     ticketsData: getTicketsBasedOnProject.reducer
   },
+   middleware: (getDefaultMiddleware) =>
+   getDefaultMiddleware({
+     serializableCheck: false
+   })
 });
 
 export default store;

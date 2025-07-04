@@ -1,18 +1,20 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import axios from "../../utils/axiosConfig";
 
 // LOGIN END POINT URL:
 const loginApi = process.env.REACT_APP_LOGIN_ENDPOINT;
 
 const initialState = {
   userData: {
-    readonly: null,
-    isAdmin: null,
-    userId: null,
-    isError: null,
     jwt: "",
-    isTaskCreator: null,
-    expiration: null,
+    userId: null,
+    name: null,
+    email: null,
+    role: null,
+    emailVerified: null,
+    oauthProviderId: null,
+    createdAt: null,
+    isError: null,
   },
   isError: false,
   isPending: false,
@@ -43,23 +45,26 @@ export default loginEndpointSlice;
 
 export const loginEndPointAsyncFunc = createAsyncThunk(
   "loginEndpoint/login",
-  async ({ userEmail }) => {
-    return axios
-      .post(`${loginApi + userEmail}`, {}, { withCredentials: true })
-      .then((response) => {
-        localStorage.setItem("jwt", response.data.jwt);
-        return {
-          readonly: response?.data?.readonly,
-          isAdmin: response?.data?.isAdmin,
-          userId: response?.data?.userId,
-          isError: response?.data?.isError,
-          jwt: response?.data?.jwt,
-          isTaskCreator: response?.data?.isTaskCreator,
-          expiration: response?.data?.expiration,
-        };
-      })
-      .catch(() => ({
-        isError: true,
-      }));
+  async ({ email, name, oauthProviderId }) => {
+    const response = await axios.post(process.env.REACT_APP_LOGIN_ENDPOINT, {
+      email,
+      name,
+      oauthProviderId,
+    });
+    const { token, user } = response.data;
+
+    return {
+      jwt: token,
+      userId: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      emailVerified: user.emailVerified,
+      oauthProviderId: user.oauthProviderId,
+      createdAt: user.createdAt,
+      isError: false,
+      isAdmin: user.role === "ADMIN",
+      isTaskCreator: user.role === "TASK_CREATOR",
+    };
   }
 );

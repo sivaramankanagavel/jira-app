@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL || 'http://54.152.239.150:8000',
+  baseURL: process.env.REACT_APP_API_BASE_URL || 'http://54.152.239.150:5000',
   withCredentials: true,
 });
 

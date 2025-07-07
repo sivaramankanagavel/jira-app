@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import sideNavMenuData from "../../data/side-nav-menu/side-nav-menu";
 import {
   List,

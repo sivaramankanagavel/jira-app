@@ -2,8 +2,6 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "../../utils/axiosConfig";
 
 const api = process.env.REACT_APP_API_TASKS_ASSIGNED;
-const apiUpdate = process.env.REACT_APP_API_TASKS_UPDATE;
-const apiAddTask = process.env.REACT_APP_API_TASKS_ADD;
 
 const ticketInitialState = {
   tickets: [],

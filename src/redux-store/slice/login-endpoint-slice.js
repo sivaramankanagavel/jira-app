@@ -1,9 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "../../utils/axiosConfig";
 
-// LOGIN END POINT URL:
-const loginApi = process.env.REACT_APP_LOGIN_ENDPOINT;
-
 const initialState = {
   userData: {
     jwt: "",

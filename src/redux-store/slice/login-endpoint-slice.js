@@ -49,7 +49,7 @@ export const loginEndPointAsyncFunc = createAsyncThunk(
       oauthProviderId,
     });
     const { token, user } = response.data;
-
+    localStorage.setItem("jwt", token);
     return {
       jwt: token,
       userId: user._id,

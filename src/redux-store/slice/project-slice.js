@@ -33,7 +33,11 @@ export const fetchProjects = createAsyncThunk(
   "fetch projects based on their userId",
   async ({ userId }) => {
     return axios
-      .get(`${process.env.REACT_APP_API_PROJECTS}?userId=${userId}`)
+      .get(`${process.env.REACT_APP_API_PROJECTS}?userId=${userId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        },
+      })
       .then((response) => {
         return response?.data?.map(project => ({
           ...project,

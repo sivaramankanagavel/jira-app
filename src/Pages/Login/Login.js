@@ -22,11 +22,11 @@ function Login() {
   const [open, setOpen] = useState(false);
   const [loginAttempted, setLoginAttempted] = useState(false);
   const dispatch = useDispatch();
-  const isLoggedIn = useSelector((state) => state?.login?.isLoggedIn);
-  const userLoginDetail = useSelector((state) => state?.login?.user);
-  const userData = useSelector((state) => state?.loginEndpoint?.userData);
-  const userStatus = useSelector((state) => state?.loginEndpoint);
   const navigate = useNavigate();
+  const isLoggedIn = useSelector((state) => state.auth?.googleAuth?.isLoggedIn);
+  const userLoginDetail = useSelector((state) => state.auth?.googleAuth?.user);
+  const userData = useSelector((state) => state.auth?.backendAuth?.userData);
+  const userStatus = useSelector((state) => state.auth?.backendAuth);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -34,46 +34,49 @@ function Login() {
     dispatch(loginWithGoogle());
   };
 
-  // Wrap in useCallback to prevent unnecessary recreations
-  const handleLoginEndpoint = useCallback(() => {
-    if (
-      !loginAttempted &&
-      userLoginDetail?.email &&
-      !userData?.userId &&
-      !userStatus.isPending
-    ) {
-      setLoginAttempted(true);
-      dispatch(
-        loginEndPointAsyncFunc({
-          email: userLoginDetail.email,
-          name: userLoginDetail.displayName,
-          oauthProviderId: userLoginDetail.providerId,
-        })
-      );
-    }
-  }, [loginAttempted, userLoginDetail, userData, userStatus, dispatch]);
-
-  const handleLoginSuccess = useCallback(() => {
-    if (userData?.userId) {
-      // 1. Fetch projects for the user
-      dispatch(fetchProjects({ userId: userData.userId }));
-
-      // 2. Navigate to home
-      navigate("/");
-    }
-  }, [userData, dispatch, navigate]);
-
+  // Updated useEffect hook in Login.js
   useEffect(() => {
-    if (isLoggedIn) {
-    if (userData?.userId && !userStatus.isPending && !userStatus.isError) {
-      handleLoginSuccess();
-    } else if (userStatus.isPending === false && userStatus.isError === true) {
-      setOpen(true);
-    } else {
-      handleLoginEndpoint();
-    }
-  }
-  }, [isLoggedIn, userData, userStatus, handleLoginEndpoint, handleLoginSuccess]);
+    const handleAuthFlow = async () => {
+      if (isLoggedIn && userLoginDetail?.email) {
+        try {
+          // Only call backend auth if we haven't attempted it yet
+          if (!loginAttempted && !userData?.userId && !userStatus.isPending) {
+            setLoginAttempted(true);
+
+            // Dispatch backend auth and wait for it to complete
+            const result = await dispatch(
+              loginEndPointAsyncFunc({
+                email: userLoginDetail.email,
+                name: userLoginDetail.displayName,
+                oauthProviderId: userLoginDetail.providerId,
+              })
+            ).unwrap(); // Important: unwrap() to properly handle the promise
+
+            // If we get here, backend auth succeeded
+            console.log("Backend auth success:", result);
+
+            // Fetch projects and redirect
+            dispatch(fetchProjects({ userId: result.userId }));
+            navigate("/");
+          }
+        } catch (error) {
+          console.error("Backend auth failed:", error);
+          setOpen(true);
+          setLoginAttempted(false); // Reset to allow retry
+        }
+      }
+    };
+
+    handleAuthFlow();
+  }, [
+    isLoggedIn,
+    userLoginDetail,
+    userData,
+    userStatus,
+    dispatch,
+    navigate,
+    loginAttempted,
+  ]);
 
   return (
     <div className="login-container d-flex flex-wrap flex-column justify-content-center align-items-center">

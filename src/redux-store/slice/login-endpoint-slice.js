@@ -41,27 +41,38 @@ export const { login, logout } = loginEndpointSlice.actions;
 export default loginEndpointSlice;
 
 export const loginEndPointAsyncFunc = createAsyncThunk(
-  "loginEndpoint/login",
-  async ({ email, name, oauthProviderId }) => {
-    const response = await axios.post(process.env.REACT_APP_LOGIN_ENDPOINT, {
-      email,
-      name,
-      oauthProviderId,
-    });
-    const { token, user } = response.data;
-    localStorage.setItem("jwt", token);
-    return {
-      jwt: token,
-      userId: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      emailVerified: user.emailVerified,
-      oauthProviderId: user.oauthProviderId,
-      createdAt: user.createdAt,
-      isError: false,
-      isAdmin: user.role === "ADMIN",
-      isTaskCreator: user.role === "TASK_CREATOR",
-    };
+  "auth/backendLogin",
+  async ({ email, name, oauthProviderId }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(process.env.REACT_APP_LOGIN_ENDPOINT, {
+        email,
+        name,
+        oauthProviderId,
+      });
+
+      if (!response.data.token || !response.data.user) {
+        throw new Error("Invalid response from server");
+      }
+
+      const { token, user } = response.data;
+      localStorage.setItem("jwt", token); // Make sure this matches what your API expects
+
+      return {
+        jwt: token,
+        userId: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        emailVerified: user.emailVerified,
+        oauthProviderId: user.oauthProviderId,
+        createdAt: user.createdAt,
+        isAdmin: user.role === "ADMIN",
+        isTaskCreator: user.role === "TASK_CREATOR",
+      };
+    } catch (error) {
+      // Clear any invalid token on error
+      localStorage.removeItem("jwt");
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
   }
 );

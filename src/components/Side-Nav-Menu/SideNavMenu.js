@@ -15,7 +15,7 @@ import "./styles.scss";
 
 function SideNavMenu() {
   const [open, setOpen] = useState(false);
-  const userDetails = useSelector((state) => state?.loginEndpoint?.userData);
+  const userDetails = useSelector((state) => state?.auth?.backendAuth?.userData);
   const navigate = useNavigate();
 
   const handleClick = (item) => {

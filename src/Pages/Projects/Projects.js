@@ -18,7 +18,7 @@ import { addProject } from "../../redux-store/slice/add-project-slice";
 import { getTickets } from "../../redux-store/slice/tasks-slice";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
-import { fetchProjects } from '../../redux-store/slice/project-slice';
+import { fetchProjects } from "../../redux-store/slice/project-slice";
 
 import "./styles.scss";
 
@@ -34,10 +34,10 @@ function Projects() {
   });
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const userData = useSelector((state) => state?.loginEndpoint?.userData);
+  const userData = useSelector((state) => state?.auth?.backendAuth?.userData);
   const projectsDataFromStore =
-    useSelector((state) => state?.projectsData?.projects) || [];
-  const isAdmin = useSelector((state) => state?.loginEndpoint?.isAdmin);
+    useSelector((state) => state?.projects?.projectList?.projects) || [];
+  const isAdmin = useSelector((state) => state?.auth?.backendAuth?.isAdmin);
 
   const handleProjectAdd = () => {
     setShowProjectModel(true);
@@ -51,14 +51,14 @@ function Projects() {
     }));
   };
 
-useEffect(() => {
-  if (userData?.userId) {
-    dispatch(fetchProjects({ userId: userData.userId }));
-  }
-}, [userData, dispatch]);
+  useEffect(() => {
+    if (userData?.userId) {
+      dispatch(fetchProjects({ userId: userData.userId }));
+    }
+    return () => {};
+  }, [dispatch, userData?.userId]);
 
   const handleSubmit = (e) => {
-    e.preventDefault();
     e.preventDefault();
     dispatch(
       addProject({

@@ -11,10 +11,10 @@ import CircularProgress from "@mui/material/CircularProgress";
 import "./styles.scss";
 
 const KanbanBoard = () => {
-  const tickets = useSelector((state) => state?.ticketsData?.tickets);
-  const projectId = useSelector((state) => state?.ticketsData?.projectId);
-  const userData = useSelector((state) => state?.loginEndpoint?.userData);
-  const isPending = useSelector((state) => state?.ticketsData?.isPending);
+  const tickets = useSelector((state) => state?.tasks?.apiTasks?.tickets);
+  const projectId = useSelector((state) => state?.tasks?.apiTasks?.projectId);
+  const userData = useSelector((state) => state?.auth?.backendAuth?.userData);
+  const isPending = useSelector((state) => state?.tasks?.apiTasks?.isPending);
   const dispatch = useDispatch();
 
   const [showSpinner, setShowSpinner] = useState(false);

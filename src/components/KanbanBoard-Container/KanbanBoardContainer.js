@@ -27,8 +27,8 @@ const KanbanBoardContainer = () => {
     dueDate: null,
     assigneeId: null,
   });
-  const userData = useSelector((state) => state?.loginEndpoint?.userData);
-  const projectId = useSelector((state) => state?.ticketsData?.projectId);
+  const userData = useSelector((state) => state?.auth?.backendAuth?.userData);
+  const projectId = useSelector((state) => state?.tasks?.apiTasks?.projectId);
   const dispatch = useDispatch();
 
   const handleIsOpen = () => {

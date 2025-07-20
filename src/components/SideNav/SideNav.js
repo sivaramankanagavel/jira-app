@@ -12,9 +12,11 @@ import { Tooltip } from "react-tooltip";
 import "./styles.scss";
 
 function SideNav({ signInText }) {
-  const isLoggedIn = useSelector((state) => state?.login?.isLoggedIn);
-  const user = useSelector((state) => state?.login?.user);
-  const sidenavOpen = useSelector((state) => state?.sidenav?.isOpen);
+  const isLoggedIn = useSelector(
+    (state) => state?.auth?.googleAuth?.isLoggedIn
+  );
+  const user = useSelector((state) => state?.auth?.googleAuth?.user);
+  const sidenavOpen = useSelector((state) => state?.ui?.sidenav?.isOpen);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

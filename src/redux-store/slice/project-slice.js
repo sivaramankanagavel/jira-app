@@ -30,9 +30,9 @@ export default projectSlice;
 
 export const fetchProjects = createAsyncThunk(
   "fetch projects based on their userId",
-  async({userId}) => {
+  async() => {
     return axios
-      .get(`http://localhost:8080/api/projects/user/${userId}`, {
+      .get(`${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_PROJECTS_ENDPOINT}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("jwt")}`
         },

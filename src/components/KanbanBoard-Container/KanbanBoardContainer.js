@@ -25,7 +25,7 @@ const KanbanBoardContainer = () => {
   const [taskCreationData, setTaskCreationData] = useState({
     description: "",
     dueDate: null,
-    assigneeId: null
+    assigneeId: null,
   });
   const userData = useSelector((state) => state?.loginEndpoint?.userData);
   const projectId = useSelector((state) => state?.ticketsData?.projectId);
@@ -56,20 +56,20 @@ const KanbanBoardContainer = () => {
     e.preventDefault();
     if (taskCreationData.description && taskCreationData.dueDate) {
       const taskData = {
-        ...taskCreationData,
+        description: taskCreationData.description,
+        dueDate: taskCreationData.dueDate,
         projectId: projectId,
-        ownerId: userData?.userId,
-        assigneeId: userData?.userId
+        assigneeId: userData?.userId, // or select from UI if needed
       };
-      dispatch(addTask({ taskData: taskData })).then(() => {
+
+      dispatch(addTask({ taskData })).then(() => {
         dispatch(getTickets({ projectId, userId: userData?.userId }));
         setIsOpen(false);
         setTaskCreationData({
           description: "",
           dueDate: null,
           projectId: null,
-          ownerId: null,
-          assigneeId: null
+          assigneeId: null,
         });
       });
     } else {

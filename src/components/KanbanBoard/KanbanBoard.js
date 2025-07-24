@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Box, Paper, Typography, Card, CardContent } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { updateTaskStatus, getTickets } from "../../redux-store/slice/tasks-slice";
+import {
+  updateTaskStatus,
+  getTickets,
+} from "../../redux-store/slice/tasks-slice";
 import CircularProgress from "@mui/material/CircularProgress";
 
 import "./styles.scss";
@@ -38,14 +41,21 @@ const KanbanBoard = () => {
   };
 
   const onDragEnd = (result) => {
-    const { destination, draggableId } = result;
-    if (!destination) return;
+    const { destination, draggableId, source } = result;
+    if (!destination || destination.droppableId === source.droppableId) return;
+
+    // Find the dragged task's current data from your Redux store or props
+    const task = tickets.find((t) => t._id === draggableId);
+    if (!task) return;
+
     dispatch(
       updateTaskStatus({
-        userId: userData.userId,
-        projectId: projectId,
-        taskId: Number(draggableId),
-        status: destination.droppableId,
+        taskId: draggableId,
+        updatedData: {
+          status: destination.droppableId,
+          description: task.description,
+          dueDate: task.dueDate,
+        },
       })
     ).then(() => {
       dispatch(getTickets({ projectId: projectId, userId: userData.userId }));
@@ -90,8 +100,8 @@ const KanbanBoard = () => {
                     ?.filter((ticket) => ticket.status === status)
                     ?.map((ticket, index) => (
                       <Draggable
-                        key={ticket.id}
-                        draggableId={String(ticket.id)}
+                        key={ticket._id}
+                        draggableId={String(ticket._id)}
                         index={index}
                       >
                         {(provided) => (

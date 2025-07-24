@@ -1,36 +1,23 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import { fetchProjects } from "./project-slice";
 
-const addProjectIntialState = {
-    projectName: "",
-    projectDescription: "",
-    ownerId: "",
-    startDate: "",
-    endDate: "",
-    createdAt: "",
-};
-
-const addProjectSlice = createSlice({
-    name: "addProject",
-    initialState: addProjectIntialState,
-    reducers: {
-        addProject: (state, action) => {
-            state.projectName = action.payload.projectName;
-            state.projectDescription = action.payload.projectDescription;
-            state.ownerId = action.payload.ownerId;
-            state.startDate = action.payload.startDate;
-            state.endDate = action.payload.endDate;
-            state.createdAt = action.payload.createdAt;
-        },
-        resetProjectData: (state) => {
-            state.projectName = "";
-            state.projectDescription = "";
-            state.ownerId = "";
-            state.startDate = "";
-            state.endDate = "";
-            state.createdAt = "";
-        },
-    },
-});
-
-export const { addProject, resetProjectData } = addProjectSlice.actions;
-export default addProjectSlice;
+export const addProject = createAsyncThunk(
+  "Create Project",
+  async ({ projectData }) => {
+    return axios
+      .post(
+        `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_PROJECTS_ENDPOINT}`,
+        projectData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          },
+        }
+      )
+      .then(() => {
+        fetchProjects();
+      })
+      .catch((error) => error);
+  }
+);

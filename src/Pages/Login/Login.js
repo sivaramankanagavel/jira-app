@@ -43,14 +43,15 @@ function Login() {
       } else if (userStatus.isPending === false && userStatus.isError === true) {
         setOpen(true);
       } else if (userData['userId'] === null && userStatus.isPending !== true) {
-        dispatch(loginEndPointAsyncFunc({userEmail: userLoginDetail['email']}));
+        dispatch(loginEndPointAsyncFunc({ idToken: userLoginDetail.idToken }));
       }
     }
   }, [isLoggedIn, userData]);
 
   useEffect(() => {
     if(userData['userId'] !== null){
-      dispatch(fetchProjects({userId: userData['userId']}));
+      dispatch(fetchProjects());
+      navigate("/");
     }
   }, [userData]);
 

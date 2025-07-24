@@ -35,13 +35,16 @@ export default getTicketsBasedOnProject;
 
 export const getTickets = createAsyncThunk(
   "get the task based on userId and ProjectId",
-  async ({ projectId, userId }) => {
+  async ({ projectId }) => {
     return axios
-      .get(`${api + `userId=${userId}` + `&projectId=${projectId}`}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
-        },
-      })
+      .get(
+        `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_API_TASKS_AND_PROJECTS}/${projectId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          },
+        }
+      )
       .then((result) => {
         return result?.data;
       })
@@ -51,11 +54,11 @@ export const getTickets = createAsyncThunk(
 
 export const updateTaskStatus = createAsyncThunk(
   "Update Task Status",
-  async ({ userId, projectId, taskId, status }) => {
+  async ({ taskId, updatedData }) => {
     return axios
       .put(
-        `${apiUpdate}`,
-        { userId, projectId, taskId, status },
+        `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_API_TASKS}/${taskId}`,
+        updatedData,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("jwt")}`,
@@ -70,11 +73,10 @@ export const updateTaskStatus = createAsyncThunk(
 );
 
 export const addTask = createAsyncThunk("Create Task", async ({ taskData }) => {
-  const { description, dueDate, assigneeId, projectId, ownerId } = taskData;
   return axios
     .post(
-      `${apiAddTask}`,
-      { description, dueDate, assigneeId, projectId, ownerId },
+      `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_API_TASKS}`,
+      taskData,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("jwt")}`,

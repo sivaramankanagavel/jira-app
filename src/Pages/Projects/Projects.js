@@ -23,19 +23,20 @@ import "./styles.scss";
 function Projects() {
   const [showProjectModel, setShowProjectModel] = useState(false);
   const [projectCreationData, setprojectCreationData] = useState({
-    projectName: "",
-    projectDescription: "",
-    ownerId: "",
+    name: "",
+    description: "",
     startDate: "",
     endDate: "",
-    createdAt: "",
   });
+
   const dispatch = useDispatch();
-  const naviagte = useNavigate()
+  const naviagte = useNavigate();
   const userData = useSelector((state) => state?.loginEndpoint?.userData);
   const projectsDataFromStore =
     useSelector((state) => state?.projectsData?.projects) || [];
-  const isAdmin = useSelector((state) => state?.loginEndpoint?.isAdmin);
+  const isAdmin = useSelector(
+    (state) => state?.loginEndpoint?.userData?.isAdmin
+  );
 
   const handleProjectAdd = () => {
     setShowProjectModel(true);
@@ -43,21 +44,28 @@ function Projects() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setprojectCreationData((prevData) => ({
-      ...prevData,
+    setprojectCreationData({
+      ...projectCreationData,
       [name]: value,
-    }));
+    });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(addProject(projectCreationData));
+
+    const projectData = {
+      name: projectCreationData.name,
+      description: projectCreationData.description,
+      startDate: new Date(projectCreationData.startDate).toISOString(),
+      endDate: new Date(projectCreationData.endDate).toISOString(),
+    };
+    dispatch(addProject({ projectData }));
     setShowProjectModel(false);
   };
 
   // Handle card click to navigate to tasks page
   const handleCardClick = (projectId) => {
-    dispatch(getTickets({projectId: projectId, userId: userData.userId}));
+    dispatch(getTickets({ projectId: projectId }));
     naviagte(`/projects/${projectId}`);
   };
 
@@ -80,10 +88,10 @@ function Projects() {
         <div className="row w-100 p-0 m-0">
           {projectsDataFromStore.map((project) => (
             <div
-              key={project.id}
+              key={project._id}
               className="col-3 col-md-6 col-lg-4 mb-3 pt-3 h-50"
               style={{ cursor: "pointer" }}
-              onClick={() => handleCardClick(project.id)}
+              onClick={() => handleCardClick(project._id)}
             >
               <Card variant="outlined" sx={{ "&:hover": { boxShadow: 6 } }}>
                 <CardContent>
@@ -99,7 +107,7 @@ function Projects() {
                     display="block"
                     mt={1}
                   >
-                    Owner: {project.ownerId}
+                    Owner: {project?.ownerId?.name}
                   </Typography>
                   <Typography
                     variant="caption"
@@ -159,7 +167,7 @@ function Projects() {
               <FormControl className="w-100">
                 <FormLabel htmlFor="project-name">Project Name</FormLabel>
                 <TextField
-                  name="projectName"
+                  name="name"
                   id="project-name"
                   type="text"
                   placeholder="Enter Your Project Name.."
@@ -167,7 +175,7 @@ function Projects() {
                   required
                   fullWidth
                   variant="outlined"
-                  value={projectCreationData.projectName}
+                  value={projectCreationData.name}
                   onChange={handleChange}
                 />
               </FormControl>
@@ -178,30 +186,14 @@ function Projects() {
                   Project Description
                 </FormLabel>
                 <TextField
-                  name="projectDescription"
+                  name="description"
                   id="project-descr"
                   type="text"
                   placeholder="Enter Your Project Description.."
                   required
                   fullWidth
                   variant="outlined"
-                  value={projectCreationData.projectDescription}
-                  onChange={handleChange}
-                />
-              </FormControl>
-            </div>
-            <div className="col-8 m-0 w-100 mb-3">
-              <FormControl className="w-100">
-                <FormLabel htmlFor="owner-id">Owner ID</FormLabel>
-                <TextField
-                  name="ownerId"
-                  id="owner-id"
-                  type="text"
-                  placeholder="Enter Your Owner ID.."
-                  required
-                  fullWidth
-                  variant="outlined"
-                  value={projectCreationData.ownerId}
+                  value={projectCreationData.description}
                   onChange={handleChange}
                 />
               </FormControl>
@@ -234,22 +226,6 @@ function Projects() {
                   fullWidth
                   variant="outlined"
                   value={projectCreationData.endDate}
-                  onChange={handleChange}
-                />
-              </FormControl>
-            </div>
-            <div className="col-8 m-0 mb-3 w-100">
-              <FormControl className="w-100">
-                <FormLabel htmlFor="create-at">Created At</FormLabel>
-                <TextField
-                  name="createdAt"
-                  id="create-at"
-                  type="date"
-                  placeholder="Enter Your Created At.."
-                  required
-                  fullWidth
-                  variant="outlined"
-                  value={projectCreationData.createdAt}
                   onChange={handleChange}
                 />
               </FormControl>

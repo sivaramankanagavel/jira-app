@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 // LOGIN END POINT URL:
-const api = "http://localhost:8080/api/auth/login?email=";
+const api = `${process.env.REACT_APP_API_BASE_URL}${process.env.REACT_APP_LOGIN_ENDPOINT}`;
 
 const initialState = {
   userData: {
@@ -10,13 +10,28 @@ const initialState = {
     isAdmin: null,
     userId: null,
     isError: null,
-    jwt: "",
+    jwt: null,
     isTaskCreator: null,
     expiration: null,
   },
   isError: false,
   isPending: false,
 };
+
+function parseJwt(token) {
+  try {
+    const base64Url = token.split(".")[1];
+    const base64 = decodeURIComponent(
+      atob(base64Url)
+        .split("")
+        .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
+        .join("")
+    );
+    return JSON.parse(base64);
+  } catch (e) {
+    return null;
+  }
+}
 
 const loginEndpointSlice = createSlice({
   name: "loginEndpoint",
@@ -43,19 +58,23 @@ export default loginEndpointSlice;
 
 export const loginEndPointAsyncFunc = createAsyncThunk(
   "loginEndpoint/login",
-  async ({ userEmail }) => {
+  async ({ idToken }) => {
     return axios
-      .post(`${api + userEmail}`)
+      .post(`${api}`, { idToken })
       .then((response) => {
-        localStorage.setItem("jwt", response.data.jwt);
+        const { token: jwtToken, user } = response.data;
+        if (!jwtToken || !user) {
+          throw new Error("Invalid response from server");
+        }
+        localStorage.setItem("jwt", jwtToken);
         return {
-          readonly: response?.data?.readonly,
-          isAdmin: response?.data?.isAdmin,
-          userId: response?.data?.userId,
-          isError: response?.data?.isError,
-          jwt: response?.data?.jwt,
-          isTaskCreator: response?.data?.isTaskCreator,
-          expiration: response?.data?.expiration,
+          readonly: user.readonly || false, // add actual field if it exists
+          isAdmin: user.role === "ADMIN",
+          userId: user._id,
+          isError: false,
+          jwt: jwtToken,
+          isTaskCreator: user.role === "TASK_CREATOR",
+          expiration: parseJwt(jwtToken)?.exp || null,
         };
       })
       .catch(() => ({

@@ -14,6 +14,7 @@ const googleLoginInitialState = {
     email: null,
     photoURL: null,
     providerId: null,
+    idToken: null,
   },
   error: null,
 };
@@ -69,6 +70,7 @@ export const loginWithGoogle = createAsyncThunk("login/loginWithGoogle", () =>
         email: user.email,
         photoURL: user.photoURL,
         providerId: user.providerId,
+        idToken: user.accessToken,
       };
     })
     .catch((error) => {

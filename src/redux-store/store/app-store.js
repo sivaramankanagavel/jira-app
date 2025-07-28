@@ -1,19 +1,17 @@
+// src/redux-store/store/app-store.js
+
 import { configureStore } from "@reduxjs/toolkit";
-import googleLoginSlice from "../slice/login-slice";
-import adminSlice from "../slice/admin-slice";
+import authSlice from "../slice/auth-slice";
 import sideNavSlice from "../slice/sidenav-slice";
-import loginEndpointSlice from "../slice/login-endpoint-slice";
 import projectSlice from "../slice/project-slice";
 import getTicketsBasedOnProject from "../slice/tasks-slice";
 
 const store = configureStore({
   reducer: {
-    login: googleLoginSlice.reducer,
-    admin: adminSlice.reducer,
+    auth: authSlice.reducer,
     sidenav: sideNavSlice.reducer,
-    loginEndpoint: loginEndpointSlice.reducer,
     projectsData: projectSlice.reducer,
-    ticketsData: getTicketsBasedOnProject.reducer
+    ticketsData: getTicketsBasedOnProject.reducer,
   },
 });
 

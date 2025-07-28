@@ -8,23 +8,22 @@ import {
   TextField,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { loginWithGoogle } from "../../redux-store/slice/login-slice";
+import { loginWithGoogle, loginEndPointAsyncFunc } from "../../redux-store/slice/auth-slice";
 import LoginIcon from "@mui/icons-material/Login";
 import { useNavigate } from "react-router-dom";
-import { loginEndPointAsyncFunc } from "../../redux-store/slice/login-endpoint-slice";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import { fetchProjects } from "../../redux-store/slice/project-slice";
 
 import "./styles.scss";
-import { fetchProjects } from "../../redux-store/slice/project-slice";
 
 function Login() {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
-  const isLoggedIn = useSelector((state) => state?.login?.isLoggedIn);
-  const userLoginDetail = useSelector((state) => state?.login?.user);
-  const userData = useSelector((state) => state?.loginEndpoint?.userData);
-  const userStatus = useSelector((state) => state?.loginEndpoint);
+  const isLoggedIn = useSelector((state) => state?.auth?.isLoggedIn);
+  const userLoginDetail = useSelector((state) => state?.auth?.user);
+  const userData = useSelector((state) => state?.auth?.userData);
+  const userStatus = useSelector((state) => state?.auth);
   const navigate = useNavigate();
 
   const handleSubmit = (event) => {

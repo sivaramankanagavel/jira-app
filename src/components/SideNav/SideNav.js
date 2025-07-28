@@ -5,15 +5,16 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import CloseIcon from "@mui/icons-material/Close";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutWithGoogle } from "../../redux-store/slice/login-slice";
+import { logoutWithGoogle } from "../../redux-store/slice/auth-slice";
 import { toggleSidenav } from "../../redux-store/slice/sidenav-slice";
 import SideNavMenu from "../Side-Nav-Menu/SideNavMenu";
 import { Tooltip } from "react-tooltip";
+
 import "./styles.scss";
 
 function SideNav({ signInText }) {
-  const isLoggedIn = useSelector((state) => state?.login?.isLoggedIn);
-  const user = useSelector((state) => state?.login?.user);
+  const isLoggedIn = useSelector((state) => state?.auth?.isLoggedIn);
+  const user = useSelector((state) => state?.auth?.user);
   const sidenavOpen = useSelector((state) => state?.sidenav?.isOpen);
   const dispatch = useDispatch();
   const navigate = useNavigate();

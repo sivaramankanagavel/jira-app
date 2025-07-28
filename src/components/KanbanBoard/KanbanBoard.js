@@ -13,7 +13,7 @@ import "./styles.scss";
 const KanbanBoard = () => {
   const tickets = useSelector((state) => state?.ticketsData?.tickets);
   const projectId = useSelector((state) => state?.ticketsData?.projectId);
-  const userData = useSelector((state) => state?.loginEndpoint?.userData);
+  const userData = useSelector((state) => state?.auth?.userData);
   const isPending = useSelector((state) => state?.ticketsData?.isPending);
   const dispatch = useDispatch();
 

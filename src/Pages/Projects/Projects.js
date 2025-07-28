@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useDispatch, useSelector } from "react-redux";
-import { addProject } from "../../redux-store/slice/add-project-slice";
+import { addProject, fetchProjects  } from "../../redux-store/slice/project-slice";
 import { getTickets } from "../../redux-store/slice/tasks-slice";
 import { useNavigate } from "react-router-dom";
 

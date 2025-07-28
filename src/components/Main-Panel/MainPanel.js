@@ -12,8 +12,8 @@ import "./styles.scss";
 
 function MainPanel() {
   const isSidenavOpen = useSelector((state) => state?.sidenav?.isOpen);
-  const isLoggedIn = useSelector((state) => state?.login?.isLoggedIn);
-  const userId = useSelector((state) => state?.loginEndpoint?.userId);
+  const isLoggedIn = useSelector((state) => state?.auth?.isLoggedIn);
+  const userId = useSelector((state) => state?.auth?.userData?.userId);
   const dispatch = useDispatch();
 
   const handleSidenavToggle = () => {
